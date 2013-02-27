@@ -6,6 +6,7 @@
 % \setkomafont{disposition}{\normalfont\bfseries}
 \usepackage{amsmath}
 \usepackage{microtype}
+\usepackage{fancyref}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,urlcolor=cyan}
 
@@ -82,16 +83,19 @@ does not refer to the \textit{heap data structure}. See
 \end{align}
 
 \subsubsection{Sorted Relation (Binary Search)}
+\label{sec:sorted}
 
 \begin{align}
   x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
   \intertext{If selecting on candidate key, \(x\) is 0.}
   \intertext{If given a percentage of qualifying tuples:}
   x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
+  \intertext{Then}
   \text{Cost} &= \ceil{\log_2B(R)} + x
 \end{align}
 
 \subsubsection{Clustered B+ Tree Index (alternative 1)}
+\label{sec:clustered-b+-tree}
 
 In a clustered index, the data pages are stored next to each
 other. This means that one I/O retrieves how ever many tuples can fit
@@ -102,6 +106,7 @@ into a page.
   \intertext{If selecting on candidate key, \(x\) is 0.}
   \intertext{If given a percentage of qualifying tuples:}
   x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
+  \intertext{Then}
   \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
   \mathit{levels} &= \mathit{height} + 1 \\
   \text{Cost} &= \mathit{levels} + x
@@ -112,16 +117,25 @@ into a page.
 In an unclustered index, the data pages are scattered (in the worst
 case). This means that one I/O one only retrieves one
 tuple. Unclustered index retrieval will be much more expensive than
-clustered index retrieval.
+clustered index retrieval. \\
+
+Notice that \(x\) is different from the \(x\) mentioned in
+\fref{sec:sorted} and \fref{sec:clustered-b+-tree}. \\
+
+\(i\) is usually 0. If there are lots of entries in each node of the
+B+ tree, then the node might spill over to another page. That's when
+\(i\) is used.
 
 \begin{align}
-  x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
-  \intertext{If selecting on candidate key, \(x\) is 0.}
+  i &: \text{Number of Additional Data Entry Pages} \notag \\
+  x &: \text{Number of Data Pages Containing Qualifying Tuples} \notag \\
+  \intertext{If selecting on candidate key, \(x\) is 1 (We still have to retrieve one data entry).}
   \intertext{If given a percentage of qualifying tuples:}
-  x &= \text{Percentage of Qualifying Tuples} \times C(R) - 1 \\
+  x &= \text{Percentage of Qualifying Tuples} \times C(R) \\
+  \intertext{Then}
   \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
   \mathit{levels} &= \mathit{height} + 1 \\
-  \text{Cost} &= \mathit{levels} + x
+  \text{Cost} &= \mathit{levels} + i + x
 \end{align}
 
 \end{document}

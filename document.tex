@@ -85,18 +85,41 @@ does not refer to the \textit{heap data structure}. See
 
 \begin{align}
   x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
-  \intertext{\(x\) is 0 if selecting on candidate key.}
+  \intertext{If selecting on candidate key, \(x\) is 0.}
+  \intertext{If given a percentage of qualifying tuples:}
+  x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
   \text{Cost} &= \ceil{\log_2B(R)} + x
 \end{align}
 
-If given a percentage of qualifying tuples, multiply by the total pages in the relation (\(B(R)\)) to get \(x\).
-
 \subsubsection{Clustered B+ Tree Index (alternative 1)}
+
+In a clustered index, the data pages are stored next to each
+other. This means that one I/O retrieves how ever many tuples can fit
+into a page.
 
 \begin{align}
   x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
-  \intertext{\(x\) is 0 if selecting on candidate key.}
-  \mathit{levels} &: Number of Levels in the B+ Tree \\
+  \intertext{If selecting on candidate key, \(x\) is 0.}
+  \intertext{If given a percentage of qualifying tuples:}
+  x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
+  \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
+  \mathit{levels} &= \mathit{height} + 1 \\
+  \text{Cost} &= \mathit{levels} + x
+\end{align}
+
+\subsubsection{Unclustered B+ Tree Index}
+
+In an unclustered index, the data pages are scattered (in the worst
+case). This means that one I/O one only retrieves one
+tuple. Unclustered index retrieval will be much more expensive than
+clustered index retrieval.
+
+\begin{align}
+  x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
+  \intertext{If selecting on candidate key, \(x\) is 0.}
+  \intertext{If given a percentage of qualifying tuples:}
+  x &= \text{Percentage of Qualifying Tuples} \times C(R) - 1 \\
+  \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
   \mathit{levels} &= \mathit{height} + 1 \\
   \text{Cost} &= \mathit{levels} + x
 \end{align}

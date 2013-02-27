@@ -4,9 +4,15 @@
 % \documentclass{scrartcl}
 % If you use the above, uncomment this to use the same font as the `article' class.
 % \setkomafont{disposition}{\normalfont\bfseries}
+
+% Put space between paragraphs and start without indentation.
+\usepackage[parfill]{parskip}
+% Needed for \Join
+\usepackage{latexsym}
 \usepackage{amsmath}
 \usepackage{microtype}
 \usepackage{fancyref}
+% \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,urlcolor=cyan}
 
@@ -26,18 +32,46 @@
 
 \section*{Disclaimer}
 
-These formulas may or may not be correct. They are personal
-interpretations of formulas in the slides and book we are using.
+\textcolor{red}{These formulas may or may not be correct. They are personal
+  interpretations of formulas in the slides and book we are using.}
 
-\section{External Sorting}
+\section*{Reasoning}
+
+You may ask, ``How are these formulas different from what is in the
+book and slides?'' The answer is this: these formulas are based on
+the actual problems that we have been given to solve in the
+homework. All variables have been explained at points where they
+seemed confusing.
+
+\section{Data Entry Alternatives}
+
+For more on this topic, see p. 276 in the book.
+
+\begin{enumerate}
+\item A data entry on \(k*\) is an actual record with search key value
+  \(k\).
+\item A data entry is a \(k, \mathit{rid}\) pair, where rid is the
+  record id of a data record with search key value \(k\).
+\item A data entry is a \(k, \mathit{ridlist}\) pair, where
+  \(\mathit{ridlist}\) is a list of record ids of data records with
+  search key value \(k\).
+\end{enumerate}
+
+\section{Common Variables}
 
 \begin{align*}
   N &: \text{File size in pages} \\
   B_i &: \text{Number of Input Buffers} \\
   B_o &: \text{Number of Output Buffers} \\
   B_T &: \text{Total Buffer Pages Available} \\
-  b &: \text{Number of blocks used for blocked I/O}
+  b &: \text{Number of blocks used for blocked I/O} \\
+  B(R) &: \text{Size of Relation \(R\) in blocks} \\
+  C(R) &: \text{Number of Tuples in Relation \(R\) (cardinality)}
 \end{align*}
+
+\section{External Sorting}
+\label{sec:externalsorting}
+
 \begin{align}
   \text{Number of Sorted Runs} &= \ceil{\frac{N}{B_T}}\\
   \text{Cost of Partial Sort (I/Os)} &= 2N
@@ -59,16 +93,9 @@ interpretations of formulas in the slides and book we are using.
   \text{Total Cost of External Sort} &= 2N\paren{\ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} + 1}
 \end{align}
 
-\section{Relational Operations}
-
-\begin{align*}
-  B(R) &: \text{Size of Relation \(R\) in blocks} \\
-  C(R) &: \text{Number of Tuples in Relation \(R\) (cardinality)}
-\end{align*}
-
-\subsection{Selection}
-
-\subsubsection{Heap}
+\section{Selection}
+\label{sec:selection}
+\subsection{Heap}
 
 \textbf{Clarification:} \textit{Heap} just means a bunch of memory. It
 does not refer to the \textit{heap data structure}. See
@@ -82,7 +109,7 @@ does not refer to the \textit{heap data structure}. See
   \text{Range on Non-Candidate Key} &= B(R)
 \end{align}
 
-\subsubsection{Sorted Relation (Binary Search)}
+\subsection{Sorted Relation (Binary Search)}
 \label{sec:sorted}
 
 \begin{align}
@@ -90,11 +117,11 @@ does not refer to the \textit{heap data structure}. See
   \intertext{If selecting on candidate key, \(x\) is 0.}
   \intertext{If given a percentage of qualifying tuples:}
   x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
-  \intertext{Then}
+  \intertext{Then:}
   \text{Cost} &= \ceil{\log_2B(R)} + x
 \end{align}
 
-\subsubsection{Clustered B+ Tree Index (alternative 1)}
+\subsection{Clustered B+ Tree Index (Alternative-1)}
 \label{sec:clustered-b+-tree}
 
 In a clustered index, the data pages are stored next to each
@@ -106,21 +133,21 @@ into a page.
   \intertext{If selecting on candidate key, \(x\) is 0.}
   \intertext{If given a percentage of qualifying tuples:}
   x &= \text{Percentage of Qualifying Tuples} \times B(R) - 1 \\
-  \intertext{Then}
+  \intertext{Then:}
   \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
   \mathit{levels} &= \mathit{height} + 1 \\
   \text{Cost} &= \mathit{levels} + x
 \end{align}
 
-\subsubsection{Unclustered B+ Tree Index}
+\subsection{Unclustered B+ Tree Index}
 
 In an unclustered index, the data pages are scattered (in the worst
 case). This means that one I/O one only retrieves one
 tuple. Unclustered index retrieval will be much more expensive than
-clustered index retrieval. \\
+clustered index retrieval.
 
 Notice that \(x\) is different from the \(x\) mentioned in
-\fref{sec:sorted} and \fref{sec:clustered-b+-tree}. \\
+\fref{sec:sorted} and \fref{sec:clustered-b+-tree}.
 
 \(i\) is usually 0. If there are lots of entries in each node of the
 B+ tree, then the node might spill over to another page. That's when
@@ -132,10 +159,93 @@ B+ tree, then the node might spill over to another page. That's when
   \intertext{If selecting on candidate key, \(x\) is 1 (We still have to retrieve one data entry).}
   \intertext{If given a percentage of qualifying tuples:}
   x &= \text{Percentage of Qualifying Tuples} \times C(R) \\
-  \intertext{Then}
+  \intertext{Then:}
   \mathit{levels} &: \text{Number of Levels in the B+ Tree} \notag \\
   \mathit{levels} &= \mathit{height} + 1 \\
   \text{Cost} &= \mathit{levels} + i + x
 \end{align}
 
+\subsection{Hash Index}
+
+A hash index can only be used for equality \textit{unless} it is a clustered hash index.
+
+\subsubsection{Unclustered Without Explicit Index}
+
+For an example, see \(age\) in Figure 8.2 in the book on p. 280.
+
+\begin{align}
+  k &: \text{Average Length of the Overflow Chain} \notag \\
+  k &\approx 0.2 \\
+  \text{Cost} &= 1 + k
+\end{align}
+
+\subsubsection{Unclustered With Explicit Index}
+
+A hash index is explicit if it uniquely identifies a record. We assume
+Alternative-2 or Alternative-3 for this type of index.
+
+For an example, see \(salary\) in Figure 8.2 in the book on p. 280.
+
+\begin{align}
+  i &: \text{Average Number of Data Entry Pages Retrieved} \notag \\
+  x &: \text{Number of Data Pages Containing Qualifying Tuples} \notag \\
+  i &\approx 1.2 \\
+  \text{Cost} &= i + x
+\end{align}
+
+\section{Join}
+
+\begin{equation*}
+% Limits forces the text under the join symbol. Take it out for just a
+% subscript. Either look OK.
+  R \Join\limits_{R.\mathit{sid} = S.\mathit{sid}} S
+\end{equation*}
+
+\subsection{Block-Nested Loop}
+
+Applicable even if \(S\) is a heap.
+
+\(B_i\) will be \(B_T - 2\) if using one block as an input buffer for
+\(S\) and the another as an output buffer.
+
+All of \(R\) is read, and \(S\) is read one page at a time.
+
+\begin{equation}
+  \text{Cost} = B(R) + B(S)\ceil{\frac{B(R)}{B_i}}
+\end{equation}
+
+\subsection{Index-Nested Loop}
+
+Applicable only if \(S\) is indexed on the join attribute.
+
+See \fref{sec:selection} for values of \(x\).
+
+\begin{align}
+  x &: \text{Cost of Retrieving Matching Tuples in} S \notag \\
+  \text{Cost} &= B(R) + C(R) \times x
+\end{align}
+
+\subsection{Sort-Merge}
+
+Applicable only if \(R\) and \(S\) are both sorted on the join
+attribute. If they are not, add the cost of external sorting to the
+total cost. See \fref{sec:externalsorting} to compute that cost.
+
+Scan both relations once.
+
+\begin{equation}
+  \text{Cost} = B(R) + B(S)
+\end{equation}
+
+\subsection{Hash Join}
+
+Applicable only if \(S\) is a heap; it partitions \(S\) using hashing.
+
+\begin{align}
+  \intertext{Read and write each one once using hash function \(h1\):}
+  \text{Partitioning Cost} &= 2\paren{B(R) + B(S)} \\
+  \intertext{Read each one once using hash function \(h2\):}
+  \text{Probing Cost} &= B(R) + B(S) \\
+  \text{Total Cost} &= 3\paren{B(R) + B(S)}
+\end{align}
 \end{document}

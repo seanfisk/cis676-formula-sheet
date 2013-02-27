@@ -16,15 +16,17 @@
 
 
 \title{CIS 676 Database Performance Formula Sheet}
-\author{Sean Fisk \mailtohref{sean@seanfisk.com}}
+\author{Sean Fisk \mailtohref{sean@seanfisk.com} \\
+  Cindy Vannoy \\
+  Emily Johnson}
 
 \begin{document}
 \maketitle
 
 \section*{Disclaimer}
 
-These formulas may or may not be correct. They are my personal
-interpretation of formulas in the slides and book we are using.
+These formulas may or may not be correct. They are personal
+interpretations of formulas in the slides and book we are using.
 
 \section{External Sorting}
 
@@ -54,6 +56,48 @@ interpretation of formulas in the slides and book we are using.
   \text{Number of Merge Passes} &= \ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
   \text{Cost of Merge Phase (I/Os)} &= 2N\ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
   \text{Total Cost of External Sort} &= 2N\paren{\ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} + 1}
+\end{align}
+
+\section{Relational Operations}
+
+\begin{align*}
+  B(R) &: \text{Size of Relation \(R\) in blocks} \\
+  C(R) &: \text{Number of Tuples in Relation \(R\) (cardinality)}
+\end{align*}
+
+\subsection{Selection}
+
+\subsubsection{Heap}
+
+\textbf{Clarification:} \textit{Heap} just means a bunch of memory. It
+does not refer to the \textit{heap data structure}. See Heap on Wikipedia for
+more details.
+
+\begin{align}
+  \text{Equality on Candidate Key} &= \frac{B(R)}{2} \text{(scan until record is found)} \\
+  \text{Equality on Non-Candidate Key} &= B(R) \text{(must scan until end of file)} \\
+  \text{Range on Candidate Key} &= B(R) \\
+  \text{Range on Non-Candidate Key} &= B(R)
+\end{align}
+
+\subsubsection{Sorted Relation (Binary Search)}
+
+\begin{align}
+  x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
+  \intertext{\(x\) is 0 if selecting on candidate key.}
+  \text{Cost} &= \ceil{\log_2B(R)} + x
+\end{align}
+
+If given a percentage of qualifying tuples, multiply by the total pages in the relation (\(B(R)\)) to get \(x\).
+
+\subsubsection{Clustered B+ Tree Index (alternative 1)}
+
+\begin{align}
+  x &: \text{Number of Additional Pages Containing Qualifying Tuples} \notag \\
+  \intertext{\(x\) is 0 if selecting on candidate key.}
+  \mathit{levels} &: Number of Levels in the B+ Tree \\
+  \mathit{levels} &= \mathit{height} + 1 \\
+  \text{Cost} &= \mathit{levels} + x
 \end{align}
 
 \end{document}

@@ -4,24 +4,41 @@
 % \documentclass{scrartcl}
 % If you use the above, uncomment this to use the same font as the `article' class.
 % \setkomafont{disposition}{\normalfont\bfseries}
-
+\usepackage{amsmath}
 \usepackage{microtype}
-% Uncomment if using references.
-% \usepackage{csquotes}
-% \usepackage[backend=biber,style=authoryear]{biblatex}
-% \addbibresource{citations.bib}
 \usepackage{hyperref}
 \hypersetup{hidelinks}
 
 \newcommand{\mailtohref}[1]{\href{mailto:#1}{$<$\nolinkurl{#1}$>$}}
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
+\newcommand{\paren}[1]{\left(#1\right)}
 
-\title{Just a \LaTeX template}
+
+\title{CIS 676 Database Performance Formula Sheet}
 \author{Sean Fisk \mailtohref{sean@seanfisk.com}}
 
 \begin{document}
 \maketitle
 
-% Uncomment if using references.
-% \printbibliography
+\section*{Disclaimer}
 
+These formulas may or may not be correct. They are my personal
+interpretation of formulas in the slides and book we are using.
+
+\section*{External Sorting}
+
+\begin{align*}
+  N &: \text{File size in pages} \\
+  B_i &: \text{Number of Input Buffers} \\
+  B_o &: \text{Number of Output Buffers} \\
+  B_T &: \text{Total Buffer Pages Available}
+\end{align*}
+\begin{align*}
+  \text{Number of Sorted Runs} &= \ceil{\frac{N}{B_T}}\\
+  \text{Cost of Partial Sort (I/Os)} &= 2N \\
+  \text{Number of Merge Passes} &= \ceil{\log_{B_i}\ceil{\frac{N}{B_T}}} \\
+  \text{Cost of Merge Phase (I/Os)} &= 2N\ceil{\log_{B_i}\ceil{\frac{N}{B_T}}} \\
+  \text{Total Cost of External Sort} &= 2N\paren{\ceil{\log_{B_i}\ceil{\frac{N}{B_T}}} + 1}
+\end{align*}
 \end{document}

@@ -87,10 +87,10 @@ For more on this topic, see p. 276 in the book.
 
 \subsection{Blocked I/O}
 \begin{align}
-  \text{How many way merge} &= \ceil{\frac{B_i}{b}} \\
-  \text{Number of Merge Passes} &= \ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
-  \text{Cost of Merge Phase (I/Os)} &= 2N\ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
-  \text{Total Cost of External Sort} &= 2N\paren{\ceil{\log_{\ceil{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} + 1}
+  \text{How many way merge} &= \floor{\frac{B_i}{b}} \\
+  \text{Number of Merge Passes} &= \ceil{\log_{\floor{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
+  \text{Cost of Merge Phase (I/Os)} &= 2N\ceil{\log_{\floor{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} \\
+  \text{Total Cost of External Sort} &= 2N\paren{\ceil{\log_{\floor{\frac{B_i}{b}}}\ceil{\frac{N}{B_T}}} + 1}
 \end{align}
 
 \section{Selection}
